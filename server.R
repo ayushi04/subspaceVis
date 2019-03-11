@@ -68,6 +68,8 @@ function(input,output) {
     adatause = adata[input$vars]
     adatalabel=adata[input$label]
     print(adata)
+    #df <- adatause
+    #df['classLabel'] <-adata[input$label]
     #cnum = length(unique(adatalabel[1,]))
     #colors=c('#3366cc',"#ff9900", "#109618", "#dc3912", "#990099")
     #print(cnum)
@@ -76,22 +78,16 @@ function(input,output) {
     int_subspace <- CLIQUE(adatause,xi=10,tau=0.06)
     print(int_subspace)
     #coloruse=colors[1:cnum]
-    mat <- matrix(,nrow=nrow(adatause),ncol=nrow(adatause))
-    t <- get.knn(adatause, k=5)
-    for( i in 1:nrow(adatause)) {
-      for (j in 1:nrow(adatause)) {
-        if(j %in% t$nn.index[i,]) {
-          mat[i,j]=0
-        }
-        else mat[i,j]=1
-      }
-    }
-    rotate <- function(x) t(apply(x, 2, rev))
-    #image(rotate(mat))
     
     newdat=data.frame(adatause,adatalabel)
+    
+    
+    source_python("heidiVisualization.py")
+    img_path = test_func(r_to_py(newdat))
+    #print('jjjj',img_path)
     #allval=list(a=newdat,b=image(rotate(mat)),c=mat)
-    allval=list(a=newdat,b=rotate(mat))
+    #im<-load.image(img_path)
+    allval=list(a=newdat,b=img_path)
     allval
   })
   
@@ -106,13 +102,13 @@ function(input,output) {
   output$plot1 = renderImage({
 
     allval=models()
-    print('allval')
-    jpeg(file='temp2.jpeg', width=400, height=400)
-    image(allval$b)
-    dev.off()
+    #print('allval',allval$b)
+    #jpeg(file='temp2.jpeg', width=400, height=400)
+    #image(allval$b)
+    #dev.off()
     #hist(rnorm(allval$b))
     #dev.off()
-    list(src = 'temp2.jpeg', alt = 'This is alternate text')
+    list(src = allval$b, alt = 'This is alternate text', width=400, height=400)
   }, deleteFile = TRUE)
   
   "

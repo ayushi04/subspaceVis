@@ -16,6 +16,8 @@ library(shinyjs)
 library(pairsD3)
 library('FNN')
 library(subspace)
+library('reticulate')
+library('imager')
 
 
 dashboardPage(
