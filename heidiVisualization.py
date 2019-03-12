@@ -115,4 +115,25 @@ def test_func(df):
     img,bit_subspace=generateHeidiMatrixResults_noorder_helper(matrix,bs,output,sorted_data,'legend_heidi')
     return output+'/consolidated_img.png'
 
-
+def get_heidi_input_subspace_noorder(df, bin_value, factor=1, classLabelname='classLabel'):
+    #bin_value = [True, False, True, False]
+    #factor =1
+    #classLabelname='classLabel'
+    row=df.shape[0]
+    heidi_matrix=np.zeros(shape=(row,row),dtype=np.uint64)
+    subspace_col = [i for i,x in enumerate(bin_value) if x]
+    filtered_data=df.iloc[:,subspace_col] #NEED TO CHANGE IF COL IS A LIST
+    filtered_data[classLabelname]=df[classLabelname].values
+    filtered_data['classLabel_orig']=filtered_data[classLabelname].values
+    sorted_data=filtered_data
+    subspace=sorted_data.iloc[:,:-2]
+    np_subspace=subspace.values
+    nbrs=NearestNeighbors(n_neighbors=knn,algorithm='ball_tree').fit(np_subspace)
+    temp=nbrs.kneighbors_graph(np_subspace).toarray()
+    temp=temp.astype(np.uint64)
+    heidi_matrix=heidi_matrix + temp*factor
+    factor=factor*2
+    subspace_col_name=[df.columns[j] for j in subspace_col]
+    output='.'
+    img,bit_subspace=generateHeidiMatrixResults_noorder_helper(heidi_matrix,bs,output,sorted_data,'legend_heidi')
+    return output+'/consolidated_img.png'

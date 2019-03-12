@@ -1,0 +1,84 @@
+---
+title: "Heidi_in_R"
+output: html_document
+---
+
+```{r}
+library('seriation')
+data("iris")
+x <- as.matrix(iris[-5])
+x1 <- x[sample(1:nrow(x)),]
+d <- dist(x)
+```
+
+```{r}
+inputData <- read.csv('C:\\Users\\t-aygupt\\Desktop\\uploads\\iris.csv', quote="\"", header = TRUE)
+vars <- inputData[c('a','b')]
+vars['classLabel'] <-inputData['classLabel']
+adatalabel = inputData['classLabel']
+cnum = nrow(unique(adatalabel))
+```
+
+```{r}
+library('subspace')
+Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jre1.8.0_201')
+int_subspace <- CLIQUE(vars,xi=10,tau=0.06)
+#print(int_subspace[1])
+#x1 <- SubClu(vars,epsilon=1,minSupport=5)
+```
+
+```{r}
+#vars
+source_python("heidiVisualization.py")
+get_heidi_input_subspace_noorder(r_to_py(vars), r_to_py(int_subspace[[1]][['subspace']]))
+
+```
+
+
+```{r}
+for(i in seq(1,length(int_subspace))){
+  print(int_subspace[[i]][['subspace']])
+}
+#int_subspace[[1]][['subspace']]
+```
+
+
+
+```{r}
+py_config()
+```
+
+```{r}
+library('reticulate')
+use_condaenv(condaenv = 'venv1', required = TRUE)
+source_python("heidiVisualization.py")
+#img_path = test_func(r_to_py(vars))
+#matrix
+test_func1(r_to_py(vars))
+```
+
+
+```{r}
+library(imager)
+img_path
+im<-load.image(img_path)
+plot(im)
+```
+
+```{r}
+library(png)
+img <- readPNG('./consolidated_img.png')
+grid::grid.newpage()
+grid::grid.raster(img)
+
+```
+
+```{r}
+
+```
+
+```{r}
+library(imager)
+plot(boats)
+```
+
