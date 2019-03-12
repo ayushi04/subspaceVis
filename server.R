@@ -67,7 +67,7 @@ function(input,output) {
     adata=info()
     adatause = adata[input$vars]
     adatalabel=adata[input$label]
-    print(adata)
+    #print(adata)
     #df <- adatause
     #df['classLabel'] <-adata[input$label]
     #cnum = length(unique(adatalabel[1,]))
@@ -75,8 +75,8 @@ function(input,output) {
     #print(cnum)
     #print(adatalabel)
     
-    int_subspace <- CLIQUE(adatause,xi=10,tau=0.06)
-    print(int_subspace)
+    #int_subspace <- CLIQUE(adatause,xi=10,tau=0.06)
+    #print(int_subspace)
     #coloruse=colors[1:cnum]
     
     newdat=data.frame(adatause,adatalabel)
@@ -84,6 +84,7 @@ function(input,output) {
     
     source_python("heidiVisualization.py")
     img_path = test_func(r_to_py(newdat))
+    print(img_path)
     #print('jjjj',img_path)
     #allval=list(a=newdat,b=image(rotate(mat)),c=mat)
     #im<-load.image(img_path)
@@ -111,7 +112,7 @@ function(input,output) {
     list(src = allval$b, alt = 'This is alternate text', width=400, height=400)
   }, deleteFile = TRUE)
   
-  "
+  
   # Insert the right number of plot output objects into the web page
   output$allplots <- renderUI({
     nplot=10
@@ -119,7 +120,12 @@ function(input,output) {
       plotname <- paste('aplot', i, sep='')
       plotOutput(plotname, height = 280, width = 250)
     })
-    
+    adata=info()
+    adatause = adata[input$vars]
+    adatalabel=adata[input$label]
+    newdat=data.frame(adatause,adatalabel)
+    source_python("heidiVisualization.py")
+    img_path = test_func(r_to_py(newdat))
     for(i in 1:10) {
       local({
         my_i <- i
@@ -129,17 +135,13 @@ function(input,output) {
           #jpeg(file='temp2.jpeg',width=400,height=400)
           #image(allval$b)
           #dev.off()
-          list(src='temp.jpeg')
+          list(src=img_path)
         }, deleteFile = FALSE)
       })
     }
-    
     do.call(tagList, plot_output_list)
-    
-    
-    
   })
-  "
+  
   
   
   

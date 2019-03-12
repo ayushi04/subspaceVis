@@ -27,12 +27,12 @@ def generateHeidiMatrixResults_noorder(inputData,k=20):
     allsubspaces=range(1,max_count)
     f=lambda a:sorted(a,key=lambda x:sum(int(d)for d in bin(x)[2:]))
     allsubspaces=f(allsubspaces)
-    print(allsubspaces)
+    #print(allsubspaces)
     frmt=str(inputData.shape[1]-1)+'b'
     factor=1
     bit_subspace={}
     count=0
-    print('knn:',knn)
+    #print('knn:',knn)
 
     for i in allsubspaces:
         bin_value=str(format(i,frmt))
@@ -51,7 +51,7 @@ def generateHeidiMatrixResults_noorder(inputData,k=20):
         heidi_matrix=heidi_matrix + temp*factor
         factor=factor*2
         subspace_col_name=[inputData.columns[j] for j in subspace_col]
-        print(i,subspace_col_name)
+        #print(i,subspace_col_name)
         bit_subspace[count]=subspace_col_name
         count+=1
     return heidi_matrix,bit_subspace,sorted_data
@@ -62,7 +62,7 @@ def generateHeidiMatrixResults_noorder_helper(heidi_matrix,bit_subspace,outputPa
         #map_dict,all_info=hh.getMappingDict(heidi_matrix,bit_subspace)
         map_dict,all_info=hh.getMappingDictClosedImg(heidi_matrix,bit_subspace,val_map,mapping_dict)
 
-    print(map_dict,all_info)
+    #print(map_dict,all_info)
     
     hh.createLegend(map_dict,all_info,outputPath+'/'+legend_name+'.html')
     
@@ -109,8 +109,10 @@ def orderPoints(filtered_data):
 
 def test_func(df):
     df = orderPoints(df)
-    print(df)
+    #print(df)
     matrix,bs,sorted_data = generateHeidiMatrixResults_noorder(df)
     output='.'
     img,bit_subspace=generateHeidiMatrixResults_noorder_helper(matrix,bs,output,sorted_data,'legend_heidi')
     return output+'/consolidated_img.png'
+
+

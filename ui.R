@@ -15,7 +15,7 @@ library(cluster)
 library(shinyjs)
 library(pairsD3)
 library('FNN')
-library(subspace)
+#library(subspace)
 library('reticulate')
 library('imager')
 
