@@ -115,32 +115,51 @@ function(input,output) {
   
   # Insert the right number of plot output objects into the web page
   output$allplots <- renderUI({
-    nplot=10
-    plot_output_list <- lapply(1:nplot, function(i) {
-      plotname <- paste('aplot', i, sep='')
-      plotOutput(plotname, height = 280, width = 250)
-    })
     adata=info()
     adatause = adata[input$vars]
     adatalabel=adata[input$label]
     newdat=data.frame(adatause,adatalabel)
-    source_python("heidiVisualization.py")
-    img_path = test_func(r_to_py(newdat))
-    for(i in 1:10) {
+    source_python("subspaceImage.py")
+    img_path = subspaceImageHelper(r_to_py(adatause),r_to_py(adatalabel))
+    
+    nplot=length(img_path)
+    print(img_path)
+    output$legend <- renderUI ({
+      includeHTML('./legend.html')
+    })
+    
+    plot_output_list <- lapply(1:nplot, function(i) {
+      plotname <- paste('aplot', i, sep='')
+      plotOutput(plotname, height = 280, width = 250,inline=TRUE)#, display="inline-block")
+    })
+    
+    for(i in 1:nplot) {
       local({
         my_i <- i
         plotname <- paste('aplot',my_i,sep='')
         
         output[[plotname]] <- renderImage({
-          #jpeg(file='temp2.jpeg',width=400,height=400)
-          #image(allval$b)
-          #dev.off()
-          list(src=img_path)
+          outfile <- tempfile(fileext='.png')
+          png(outfile, width=200, height = 250)
+          list(src=img_path[[my_i]],width=200, height = 250)
         }, deleteFile = FALSE)
       })
     }
     do.call(tagList, plot_output_list)
   })
+  output$dendogram <- renderPlotly({
+    hc <- hclust(dist(USArrests),"ave")
+    dend1 <- as.dendrogram(hc)
+    plot_dendro(dend1, height = 450)
+  })
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   

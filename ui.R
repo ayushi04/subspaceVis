@@ -60,16 +60,29 @@ dashboardPage(
         ,
         fluidRow(
           box(
-           width = 6, status = "info", solidHeader = TRUE,
+           width = 5, status = "info", solidHeader = TRUE,
             title = "Heidi visualization",
             plotOutput("plot1")#,
             #uiOutput("plots")
             #plotlyOutput("packagePlot3", width = "100%", height = 400)
           ),
           box(
-            width = 6, status = "info", solidHeader = TRUE,
+            width=2, status="info", solidHeader = TRUE,
+            title="color legend",
+            htmlOutput("legend")
+          ),
+          box(
+            width=5, status="info", solidHeader = TRUE,
+            title="dendogram",
+            plotlyOutput("dendogram"),
+            collapsible = TRUE,
+            div(style = 'overflow-y: scroll')
+          ),
+          box(
+            width = 12, status = "info", solidHeader = TRUE,
             title = "Heidi visualization",
-            uiOutput("allplots")
+            uiOutput("allplots"),
+            div(style = 'overflow-x: scroll')
             #plotlyOutput("packagePlot3", width = "100%", height = 400)
           )
         )
