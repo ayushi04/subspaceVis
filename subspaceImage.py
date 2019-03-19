@@ -140,6 +140,7 @@ class subspaceImage:
                         arr[i][j]=[255,255,255]
             tmp = arr.astype(np.uint8)
             img = Image.fromarray(tmp)
+            img.save('./img_noborder'+str(c)+'.png')
             img_with_border = ImageOps.expand(img,border=2, fill='black')
             img_with_border.save('./img_'+str(c)+'.png')
             opath.append('./img_'+str(c)+'.png')
@@ -172,7 +173,9 @@ def subspaceImageHelper(inputData,classLabel):
     obj.giveColorToEachSubspace()
     #obj.printAllsubspaces()
     obj.createLegend()
-    return obj.getHeidiImagesForAllSubspaces()
+    allImages = obj.getHeidiImagesForAllSubspaces()
+    
+    return allImages
     
 
 

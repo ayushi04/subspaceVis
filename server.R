@@ -1,3 +1,6 @@
+
+
+
 function(input,output) {
   
   set.seed(1000)
@@ -146,14 +149,17 @@ function(input,output) {
       })
     }
     do.call(tagList, plot_output_list)
+    
+    
   })
+  
+  
   output$dendogram <- renderPlotly({
+    adata=info()
     hc <- hclust(dist(USArrests),"ave")
     dend1 <- as.dendrogram(hc)
     plot_dendro(dend1, height = 450)
   })
-  
-  
   
   
   

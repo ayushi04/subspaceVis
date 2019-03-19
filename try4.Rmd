@@ -95,7 +95,22 @@ grid::grid.raster(img)
 ```
 
 ```{r}
+library(Matrix)
+col = c('a','b','c','d')
+allsubspace=data.frame()
+for(i in seq(1,length(col))) {
+  x=combn(col,i)
+  for(j in seq(1,ncol(x))) {
+    t = paste(x[,j],collapse="")
+    print(t)
+    print(x[,j])
+    print(match(x[,j],col))
+    print(sparseMatrix(match(x[,j],col)))
+    allsubspace
+  }
+}
 
+#expand.grid(c('a','b','c','d'))
 ```
 
 ```{r}
