@@ -41,6 +41,9 @@ class subspaceImage:
     def setDataset(self,inputData,classLabel):
         self.inputData=inputData
         self.classLabel=classLabel
+        self.inputData['id']=self.inputData.index
+        self.inputData.index = self.inputData['id']
+        del self.inputData['id']
         self.nofdims=self.inputData.shape[1]
         self.columnnames=list(inputData.columns)
         #print(inputData)
@@ -93,6 +96,18 @@ class subspaceImage:
         for i in self.allsubspaces:
             self.subspaceColors[tuple(i)]=allcolors[c]
             c=c+1
+
+    def orderPoints(self):
+        temp = self.inputData.copy()
+        temp['classLabel']=self.classLabel.values
+        temp['classLabel_orig'] = self.classLabel.values
+        sorted_data = op.sortbasedOnclassLabel(temp,'knn_bfs')
+        
+        sorting_order = sorted_data.index
+        self.inputData = self.inputData.reindex(sorting_order)
+        self.classLabel = self.classLabel.reindex(sorting_order)
+        self.inputData.to_csv('orderedfile.csv')
+        return
 
     def getHeidiImageForSubspace(self, subspace, outputpath):
         row=self.inputData.shape[0]
@@ -168,17 +183,26 @@ class subspaceImage:
         
 def subspaceImageHelper(inputData,classLabel):
     obj = subspaceImage()
+    #print(inputData.shape, classLabel.shape)
     obj.setDataset(inputData,classLabel)
+    obj.orderPoints()
     obj.setAllSubspaces()
     obj.giveColorToEachSubspace()
     #obj.printAllsubspaces()
     obj.createLegend()
     allImages = obj.getHeidiImagesForAllSubspaces()
-    
+    print('----returned-----')
     return allImages
-    
+    #return NULL
 
 
+
+def add(x, y,df):
+  print('hello')
+  print(df,x,y)
+  return x + y
+
+'''
 if __name__=='__main__':
     df = pd.read_csv('C:\\Users\\t-aygupt\\Desktop\\uploads\\iris.csv')
     df.index=df['id']
@@ -186,16 +210,17 @@ if __name__=='__main__':
     obj = subspaceImage()
     obj.setDataset(df.iloc[:,:-1],df.iloc[:,-1])
     obj.setAllSubspaces()
-    subspaceList=[[True,False,True,True], [False,False,True,True], [True,True,True,True], [True,False,False,True], [True,False,True,False]]
+    #subspaceList=[[True,False,True,True], [False,False,True,True], [True,True,True,True], [True,False,False,True], [True,False,True,False]]
     #obj.setProminentSubspaces(subspaceList)
     obj.printAllsubspaces()
     obj.giveColorToEachSubspace()
     obj.printColorToEachSubspace()
+    obj.createLegend()
+    allImages = obj.getHeidiImagesForAllSubspaces()
+    print(allImages)
     c=0
-    
     #for i in subspaceList:
     #    opath='C:\\Users\\t-aygupt\\Documents\\GitHub\\subspaceVis\\temp'+str(c)+'.jpeg'
     #    img = obj.getHeidiImageForSubspace(i,opath) 
     #    c=c+1
-    obj.getHeidiImagesForAllSubspaces()
-    obj.createLegend()
+'''
