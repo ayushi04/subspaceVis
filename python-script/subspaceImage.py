@@ -23,8 +23,6 @@ from sklearn.preprocessing import StandardScaler,MinMaxScaler
 import  heidiHelper as hh
 import orderPoints as op
 from PIL import Image, ImageOps
-from sklearn.metrics import mean_squared_error
-
 
 allcolors = [[51,98,107],  [240,74,28],  [219,65,226],  [72,198,33],  [96,56,90],  [62,86,23],  [112,146,236],  [241,63,122],  [190,169,39],  [118,54,14],  [217,155,187],  [71,190,192],  [227,147,102],  [118,180,101],  [159,47,132],  [216,133,224],  [107,78,181],  [174,37,43],  [73,98,152],  [232,127,43],  [194,103,105],  [97,177,216],  [170,121,34],  [163,165,86],  [56,103,72],  [54,158,43],  [86,59,28],  [224,57,163],  [177,95,231],  [232,102,155],  [95,188,156],  [156,91,152],  [117,45,66],  [114,119,28],  [161,69,179],  [69,69,86],  [167,110,81],  [150,167,219],  [131,47,44],  [62,143,155],  [128,106,143],  [234,93,83],  [230,100,220],  [191,153,224],  [195,154,89],  [99,85,21],  [228,157,51],  [169,54,77],  [73,62,122],  [193,98,71],  [115,43,104],  [131,112,234],  [125,195,50],  [188,48,20],  [222,53,85],  [168,51,109],  [99,128,154],  [134,157,43],  [46,107,25],  [226,105,185],  [70,192,134],  [174,114,139],  [134,180,193],  [75,149,213],  [70,187,98],  [232,47,190],  [236,60,58],  [34,74,67],  [158,110,200],  [232,102,119],  [59,132,121],  [66,111,214],  [78,128,73],  [233,44,138],  [128,120,61],  [149,94,36],  [166,145,190],  [96,105,180],  [88,159,115],  [50,76,111],  [218,125,167],  [238,142,139],  [186,50,166],  [94,64,146],  [169,185,45],  [155,61,26],  [115,62,44],  [69,74,32],  [200,161,68],  [209,99,43],  [151,80,97],  [95,135,50],  [105,165,49],  [237,122,97],  [37,77,33],  [161,186,94],  [64,206,71],  [122,80,102],  [202,44,105],  [115,82,40]  ];
 
@@ -37,17 +35,9 @@ class subspaceImage:
         self.classLabel=''
         self.knn=20
         self.allsubspaces=[]
-        self.hm=[]
         self.nofdims=0
         self.subspaceColors={} #key is subspace as tuple and value is rgb color as list {tuple:list} {subspace:rgb}
     
-    def get_topological_similarity_matrix(self):
-        mse_matrix = np.zeros((len(self.hm),len(self.hm)))
-        for i in range(len(self.hm)):
-            for j in range(len(self.hm)):
-                mse_matrix[i][j]=mean_squared_error(self.hm[i],self.hm[j])
-        return mse_matrix
-
     def setDataset(self,inputData,classLabel):
         self.inputData=inputData
         self.classLabel=classLabel
@@ -144,6 +134,7 @@ class subspaceImage:
     
     def getHeidiImagesForAllSubspaces(self):
         opath=[]
+        hm=[]
         c=0
         for subspace_col in self.allsubspaces:
             row=self.inputData.shape[0]
@@ -155,7 +146,7 @@ class subspaceImage:
             temp=nbrs.kneighbors_graph(np_subspace).toarray()
             temp=temp.astype(np.uint64)
             heidi_matrix=temp
-            self.hm.append(heidi_matrix)
+            hm.append(heidi_matrix)
             arr = np.zeros((heidi_matrix.shape[0],heidi_matrix.shape[1],3))
             for i in range(heidi_matrix.shape[0]):
                 for j in range(heidi_matrix.shape[1]):
@@ -171,7 +162,7 @@ class subspaceImage:
             opath.append('./img_'+str(c)+'.png')
             c=c+1
             
-        return opath
+        return opath,hm
     
     def createLegend(self, output_fname='legend.html'):
         print(self.columnnames)
@@ -190,12 +181,9 @@ class subspaceImage:
         Html_file= open(output_fname,"w")
         Html_file.write(html_str)
         Html_file.close()
-
-
-obj = subspaceImage()
         
 def subspaceImageHelper(inputData,classLabel):
-    #obj = subspaceImage()
+    obj = subspaceImage()
     #print(inputData.shape, classLabel.shape)
     obj.setDataset(inputData,classLabel)
     obj.orderPoints()
@@ -208,9 +196,6 @@ def subspaceImageHelper(inputData,classLabel):
     return allImages
     #return NULL
 
-def get_mse_matrix():
-    mse_matrix = obj.get_topological_similarity_matrix()
-    return mse_matrix
 
 
 def add(x, y,df):

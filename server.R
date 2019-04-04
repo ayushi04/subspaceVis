@@ -180,6 +180,16 @@ output$allplots <- renderUI ({
   source_python('subspaceImage.py')
   #print (add(5,10,pd_adata))
   img_path = subspaceImageHelper(pd_adata, pd_label)
+  mse_matrix = get_mse_matrix()
+  print(mse_matrix)
+  mse_matrix = as.dist(mse_matrix)
+  print(mse_matrix)
+  output$dendogram_top = renderPlot({
+    hr <- hclust(mse_matrix, method = "complete", members=NULL)
+    par(mfrow = c(1, 2)); #plot(hr, hang = 0.1);
+    plot(as.dendrogram(hr), edgePar=list(col=5, lwd=4), horiz=T) 
+  })
+  
   nplot = length(img_path)
   print(img_path)
   output$legend1 <- renderUI ({
